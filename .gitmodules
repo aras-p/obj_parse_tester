@@ -1,0 +1,15 @@
+[submodule "libs/tinyobjloader"]
+	path = libs/tinyobjloader
+	url = https://github.com/tinyobjloader/tinyobjloader
+[submodule "libs/fast_obj"]
+	path = libs/fast_obj
+	url = https://github.com/thisistherk/fast_obj
+[submodule "libs/rapidobj"]
+	path = libs/rapidobj
+	url = https://github.com/guybrush77/rapidobj
+[submodule "libs/assimp"]
+	path = libs/assimp
+	url = https://github.com/assimp/assimp
+[submodule "libs/xxHash"]
+	path = libs/xxHash
+	url = https://github.com/Cyan4973/xxHash
