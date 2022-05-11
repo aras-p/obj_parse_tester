@@ -115,6 +115,31 @@ static void parse_fast_obj(const char* filename)
     res.print("fast_obj");
 }
 
+static void parse_rapidobj(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    auto m = rapidobj::ParseFile(filename);
+    res.ok = !m.error;
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        res.vertex_count = (int)(m.attributes.positions.size() / 3);
+        res.normal_count = (int)(m.attributes.normals.size() / 3);
+        res.uv_count = (int)(m.attributes.texcoords.size() / 2);
+        res.vertex_hash = XXH3_64bits(m.attributes.positions.data(), m.attributes.positions.size() * 4) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(m.attributes.normals.data(), m.attributes.normals.size() * 4) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(m.attributes.texcoords.data(), m.attributes.texcoords.size() * 4) & 0xFFFFFFFF;
+        res.shape_count = (int)m.shapes.size();
+        res.material_count = (int)m.materials.size();
+    }
+
+    res.print("rapidobj");
+}
+
 
 int main(int argc, const char* argv[])
 {
@@ -127,5 +152,6 @@ int main(int argc, const char* argv[])
     printf("File: %s\n", filename);
     parse_tinyobjloader(filename);
     parse_fast_obj(filename);
-	return 0;
+    parse_rapidobj(filename);
+    return 0;
 }
