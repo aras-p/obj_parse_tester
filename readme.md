@@ -17,12 +17,12 @@ macOS 12.3, Apple M1 Max, clang 13:
 
 | Library           |sponza |Monkey-6|rungholt|Blender3Splash|
 | :---              |   ---:|    ---:|    ---:|          ---:|
-| tinyobjloader     | 0.142 | 2.11   | 2.15   | 14.83        |
-| tinyobjloader_opt | 0.030 | 0.49   | 0.39   |  6.06        |
-| fast_obj          | 0.023 | 0.33   | 0.29   |  2.42        |
+| tinyobjloader     | 0.142 | 2.09   | 2.12   | 14.72        |
+| tinyobjloader_opt | 0.030 | 0.47   | 0.38   |  5.07        |
+| fast_obj          | 0.023 | 0.33   | 0.30   |  2.40        |
 | blenderMar19      | 0.048 | 0.73   | 0.74   |  5.52        |
-| blenderMay10      |       |        | 0.73   |  5.54        |
-| assimp            | 0.129 | 1.91   | 2.21   | 14.27        |
+| blenderMay11      |       | 0.73   | 0.76   |  5.53        |
+| assimp            | 0.129 | 1.89   | 2.17   | 14.26        |
 
 
 * `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
