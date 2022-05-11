@@ -111,7 +111,7 @@ static void parse_fast_obj(const char* filename)
         res.vertex_hash = XXH3_64bits(m->positions + 3, (m->position_count-1) * 12) & 0xFFFFFFFF;
         res.normal_hash = XXH3_64bits(m->normals + 3, (m->normal_count-1) * 12) & 0xFFFFFFFF;
         res.uv_hash = XXH3_64bits(m->texcoords + 2, (m->texcoord_count-1) * 8) & 0xFFFFFFFF;
-        res.shape_count = m->object_count;
+        res.shape_count = m->group_count;
         res.material_count = m->material_count;
         fast_obj_destroy(m);
     }
@@ -178,6 +178,21 @@ static void parse_assimp(const char* filename)
     res.print("assimp");
 }
 
+static bool read_file(const char* filename)
+{
+    FILE* f = fopen(filename, "rb");
+    if (!f)
+        return false;
+    fseek(f, 0, SEEK_END);
+    auto size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    char* buf = new char[size];
+    fread(buf, 1, size, f);
+    fclose(f);
+    delete[] buf;
+    return true;
+}
+
 
 int main(int argc, const char* argv[])
 {
@@ -188,6 +203,12 @@ int main(int argc, const char* argv[])
     }
     const char* filename = argv[1];
     printf("File: %s\n", filename);
+    // just read the file in, to prewarm OS file caches
+    if (!read_file(filename))
+    {
+        printf("Can't read the file!\n");
+        return 1;
+    }
     parse_tinyobjloader(filename);
     parse_fast_obj(filename);
     parse_rapidobj(filename);
