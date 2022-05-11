@@ -48,7 +48,7 @@ struct ObjParseStats
 
     void print(const char* title) const
     {
-        printf("%-20s ok=%i t=%6.3f s num (v=%i vn=%i vt=%i o=%i mat=%i) hash (v=%08x vn=%08x vt=%08x)\n",
+        printf("%-18s ok=%i t=%6.2f s v=%8i vn=%8i vt=%8i o=%5i mat=%4i hash: v=%08x vn=%08x vt=%08x\n",
             title, ok, time, vertex_count, normal_count, uv_count, shape_count, material_count,
             vertex_hash, normal_hash, uv_hash);
     }
