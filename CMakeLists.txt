@@ -22,7 +22,31 @@ project ("obj_parse_tester")
 
 add_executable (obj_parse_tester "obj_parse_tester.cpp")
 add_definitions(-DNOMINMAX)
+target_sources(obj_parse_tester PRIVATE
+	libs/blender/importer/obj_import_file_reader.cc
+	libs/blender/importer/obj_importer.cc
+	libs/blender/importer/parser_string_utils.cc
+	libs/blender/intern/BLI_assert.c
+	libs/blender/intern/leak_detector.cc
+	libs/blender/intern/mallocn.c
+	libs/blender/intern/mallocn_guarded_impl.c
+	libs/blender/intern/mallocn_lockfree_impl.c
+	libs/blender/intern/math_base_inline.c
+	libs/blender/intern/math_color_inline.c
+	libs/blender/intern/math_geom_inline.c
+	libs/blender/intern/math_vector_inline.c
+	libs/blender/intern/path_util.c
+	libs/blender/intern/string.c
+)
 target_compile_features(obj_parse_tester PRIVATE cxx_std_17)
-target_include_directories(obj_parse_tester PRIVATE libs/tinyobjloader/experimental)
+target_include_directories(obj_parse_tester PRIVATE
+	libs/tinyobjloader/experimental
+	libs/blender
+)
 
-target_link_libraries(obj_parse_tester tinyobjloader xxHash::xxhash fast_obj_lib assimp::assimp)
+target_link_libraries(obj_parse_tester
+	tinyobjloader
+	xxHash::xxhash
+	fast_obj_lib
+	assimp::assimp
+	${CMAKE_SOURCE_DIR}/libs/blender/pthreads/lib/pthreadVC3.lib)

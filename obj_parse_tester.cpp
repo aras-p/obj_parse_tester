@@ -10,6 +10,8 @@
 #include "libs/assimp/include/assimp/scene.h"
 #include "libs/assimp/include/assimp/postprocess.h"
 
+#include "libs/blender/importer/obj_importer.hh"
+
 #include "libs/xxHash/xxhash.h"
 
 #include <stdio.h>
@@ -177,6 +179,43 @@ static void parse_rapidobj(const char* filename)
     res.print("rapidobj");
 }
 
+static void parse_blender(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    using namespace blender;
+    using namespace blender::io::obj;
+    GlobalVertices verts;
+    Vector<std::unique_ptr<Geometry>> geoms;
+    Map<std::string, std::unique_ptr<MTLMaterial>> mats;
+    OBJImportParams params;
+    strcpy_s(params.filepath, filename);
+    params.clamp_size = 0;
+    params.forward_axis = OBJ_AXIS_NEGATIVE_Z_FORWARD;
+    params.up_axis = OBJ_AXIS_Y_UP;
+    importer_main(params, verts, geoms, mats);
+
+    res.ok = !verts.vertices.is_empty();
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        res.vertex_count = (int)verts.vertices.size();
+        res.normal_count = (int)verts.vertex_normals.size();
+        res.uv_count = (int)verts.uv_vertices.size();
+        res.vertex_hash = XXH3_64bits(verts.vertices.data(), verts.vertices.size() * 12) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(verts.vertex_normals.data(), verts.vertex_normals.size() * 12) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(verts.uv_vertices.data(), verts.uv_vertices.size() * 8) & 0xFFFFFFFF;
+        res.shape_count = (int)geoms.size();
+        res.material_count = (int)mats.size();
+    }
+
+    res.print("blender");
+}
+
+
 static void parse_assimp(const char* filename)
 {
     ObjParseStats res;
@@ -234,6 +273,7 @@ int main(int argc, const char* argv[])
     parse_tinyobjloader_opt(filename);
     parse_fast_obj(filename);
     parse_rapidobj(filename);
+    parse_blender(filename);
     parse_assimp(filename);
     return 0;
 }
