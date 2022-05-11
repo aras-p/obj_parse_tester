@@ -619,7 +619,7 @@ void MTLParser::parse_and_store(Map<string, std::unique_ptr<MTLMaterial>> &r_mtl
       if (line_key_enum == eMTLSyntaxElement::string ||
           !current_mtlmaterial->texture_maps.contains_as(line_key_enum)) {
         /* No supported texture map found. */
-        std::cerr << "Texture map type not supported:'" << line_key << "'" << std::endl;
+        //std::cerr << "Texture map type not supported:'" << line_key << "'" << std::endl;
         continue;
       }
       tex_map_XX &tex_map = current_mtlmaterial->texture_maps.lookup(line_key_enum);
