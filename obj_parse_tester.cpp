@@ -1,10 +1,16 @@
-﻿#include "libs/fast_obj/fast_obj.h"
+﻿#if !defined(__APPLE__)
+#define HAS_RAPIDOBJ 1
+#endif
+
+#include "libs/fast_obj/fast_obj.h"
 
 #include "libs/tinyobjloader/tiny_obj_loader.h"
 #define TINYOBJ_LOADER_OPT_IMPLEMENTATION
 #include "libs/tinyobjloader/experimental/tinyobj_loader_opt.h"
 
+#if HAS_RAPIDOBJ
 #include "libs/rapidobj/include/rapidobj/rapidobj.hpp"
+#endif
 
 #include "libs/assimp/include/assimp/Importer.hpp"
 #include "libs/assimp/include/assimp/scene.h"
@@ -54,7 +60,11 @@ static char* read_file(const char* filename, size_t* outSize = nullptr)
     if (!f)
         return nullptr;
     fseek(f, 0, SEEK_END);
+    #ifdef _MSC_VER
     auto size = _ftelli64(f);
+    #else
+    auto size = ftello(f);
+    #endif
     fseek(f, 0, SEEK_SET);
     char* buf = new char[size];
     fread(buf, 1, size, f);
@@ -154,6 +164,7 @@ static void parse_fast_obj(const char* filename)
     res.print("fast_obj");
 }
 
+#if HAS_RAPIDOBJ
 static void parse_rapidobj(const char* filename)
 {
     ObjParseStats res;
@@ -178,6 +189,7 @@ static void parse_rapidobj(const char* filename)
 
     res.print("rapidobj");
 }
+#endif // #if HAS_RAPIDOBJ
 
 static void parse_blender(const char* filename)
 {
@@ -190,7 +202,7 @@ static void parse_blender(const char* filename)
     Vector<std::unique_ptr<Geometry>> geoms;
     Map<std::string, std::unique_ptr<MTLMaterial>> mats;
     OBJImportParams params;
-    strcpy_s(params.filepath, filename);
+    strcpy(params.filepath, filename);
     params.clamp_size = 0;
     params.forward_axis = OBJ_AXIS_NEGATIVE_Z_FORWARD;
     params.up_axis = OBJ_AXIS_Y_UP;
@@ -272,7 +284,9 @@ int main(int argc, const char* argv[])
     parse_tinyobjloader(filename);
     parse_tinyobjloader_opt(filename);
     parse_fast_obj(filename);
+    #if HAS_RAPIDOBJ
     parse_rapidobj(filename);
+    #endif
     parse_blender(filename);
     parse_assimp(filename);
     return 0;

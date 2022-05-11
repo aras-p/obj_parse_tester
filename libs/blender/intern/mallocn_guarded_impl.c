@@ -30,7 +30,11 @@
 #include <string.h> /* memcpy */
 #include <sys/types.h>
 
+#ifdef _MSC_VER
 #include "../pthreads/include/pthread.h"
+#else
+#include <pthread.h>
+#endif
 
 #include "../MEM_guardedalloc.h"
 
