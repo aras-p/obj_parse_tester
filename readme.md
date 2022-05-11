@@ -8,6 +8,7 @@ Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 | tinyobjloader_opt | 0.04 | 0.41   | 0.40   |  3.12        |
 | fast_obj          | 0.04 | 0.70   | 0.58   |  5.16        |
 | rapidobj          | 0.02 | 0.19   | 0.19   |  1.25        |
+| blenderMar18      | 0.33 | 4.93   | 4.09   | 38.35        |
 | blenderMar19      | 0.07 | 0.89   | 0.84   |  6.63        |
 | blenderMay10      |      | 1.78   | 1.70   | 12.97        |
 | blenderMay11      | 0.07 | 0.94   | 0.83   |  6.92        |
@@ -15,14 +16,15 @@ Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 
 macOS 12.3, Apple M1 Max, clang 13:
 
-| Library           |sponza |Monkey-6|rungholt|Blender3Splash|
-| :---              |   ---:|    ---:|    ---:|          ---:|
-| tinyobjloader     | 0.142 | 2.09   | 2.12   | 14.72        |
-| tinyobjloader_opt | 0.030 | 0.47   | 0.38   |  5.07        |
-| fast_obj          | 0.023 | 0.33   | 0.30   |  2.40        |
-| blenderMar19      | 0.048 | 0.73   | 0.74   |  5.52        |
-| blenderMay11      |       | 0.73   | 0.76   |  5.53        |
-| assimp            | 0.129 | 1.89   | 2.17   | 14.26        |
+| Library           |sponza|Monkey-6|rungholt|Blender3Splash|
+| :---              |  ---:|    ---:|    ---:|          ---:|
+| tinyobjloader     | 0.14 | 2.09   | 2.12   | 14.72        |
+| tinyobjloader_opt | 0.03 | 0.47   | 0.38   |  5.07        |
+| fast_obj          | 0.02 | 0.33   | 0.30   |  2.40        |
+| blenderMar18      | 0.24 | 3.56   | 3.15   | 27.14        |
+| blenderMar19      | 0.05 | 0.73   | 0.74   |  5.52        |
+| blenderMay11      |      | 0.73   | 0.76   |  5.53        |
+| assimp            | 0.13 | 1.89   | 2.17   | 14.26        |
 
 
 * `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
