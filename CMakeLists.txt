@@ -25,7 +25,7 @@ add_definitions(-DNOMINMAX)
 target_sources(obj_parse_tester PRIVATE
 	libs/blender/importer/obj_import_file_reader.cc
 	libs/blender/importer/obj_importer.cc
-	libs/blender/importer/obj_import_string_utils.cc
+	libs/blender/importer/parser_string_utils.cc
 	libs/blender/intern/BLI_assert.c
 	libs/blender/intern/leak_detector.cc
 	libs/blender/intern/mallocn.c

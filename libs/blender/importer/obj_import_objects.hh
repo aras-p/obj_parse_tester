@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include "../BLI_map.hh"
 #include "../BLI_math_vec_types.hh"
 #include "../BLI_vector.hh"
 #include "../BLI_vector_set.hh"
@@ -60,11 +59,10 @@ struct PolyCorner {
 };
 
 struct PolyElem {
-  int vertex_group_index = -1;
-  int material_index = -1;
+  std::string vertex_group;
+  std::string material_name;
   bool shaded_smooth = false;
-  int start_index_ = 0;
-  int corner_count_ = 0;
+  Vector<PolyCorner> face_corners;
 };
 
 /**
@@ -93,20 +91,15 @@ enum eGeometryType {
 struct Geometry {
   eGeometryType geom_type_ = GEOM_MESH;
   std::string geometry_name_;
-  Map<std::string, int> group_indices_;
-  Vector<std::string> group_order_;
-  Map<std::string, int> material_indices_;
-  Vector<std::string> material_order_;
-
-  int vertex_start_ = 0;
-  int vertex_count_ = 0;
+  VectorSet<std::string> material_names_;
+  /**
+   * Indices in the vector range from zero to total vertices in a geometry.
+   * Values range from zero to total coordinates in the global list.
+   */
+  Vector<int> vertex_indices_;
   /** Edges written in the file in addition to (or even without polygon) elements. */
   Vector<MEdge> edges_;
-
-  Vector<PolyCorner> face_corners_;
   Vector<PolyElem> face_elements_;
-
-  bool has_invalid_polys_ = false;
   bool has_vertex_normals_ = false;
   bool use_vertex_groups_ = false;
   NurbsElement nurbs_element_;
