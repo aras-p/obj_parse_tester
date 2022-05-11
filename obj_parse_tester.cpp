@@ -1,6 +1,5 @@
 ﻿#include "libs/fast_obj/fast_obj.h"
 #include "libs/tinyobjloader/tiny_obj_loader.h"
-//#include "blender/importer/obj_importer.hh"
 #include "libs/rapidobj/include/rapidobj/rapidobj.hpp"
 #include "libs/xxHash/xxhash.h"
 
@@ -48,12 +47,19 @@ struct ObjParseStats
     int uv_count = -1;
     int shape_count = -1;
     int material_count = -1;
-    uint64_t vertex_hash = 0;
-    uint64_t normal_hash = 0;
-    uint64_t uv_hash = 0;
+    uint32_t vertex_hash = 0;
+    uint32_t normal_hash = 0;
+    uint32_t uv_hash = 0;
+
+    void print(const char* title) const
+    {
+        printf("%-15s ok=%i t=%6.3f s num (v=%i vn=%i vt=%i o=%i mat=%i) hash (v=%08x vn=%08x vt=%08x)\n",
+            title, ok, time, vertex_count, normal_count, uv_count, shape_count, material_count,
+            vertex_hash, normal_hash, uv_hash);
+    }
 };
 
-static ObjParseStats parse_tinyobjloader(const char* filename)
+static void parse_tinyobjloader(const char* filename)
 {
     ObjParseStats res;
     auto t0 = get_time();
@@ -71,11 +77,13 @@ static ObjParseStats parse_tinyobjloader(const char* filename)
     res.vertex_count = (int)(attrib.vertices.size() / 3);
     res.normal_count = (int)(attrib.normals.size() / 3);
     res.uv_count = (int)(attrib.texcoords.size() / 2);
-    res.vertex_hash = XXH3_64bits(attrib.vertices.data(), attrib.vertices.size() * 4);
-    res.normal_hash = XXH3_64bits(attrib.normals.data(), attrib.normals.size() * 4);
-    res.uv_hash = XXH3_64bits(attrib.texcoords.data(), attrib.texcoords.size() * 4);
+    res.vertex_hash = XXH3_64bits(attrib.vertices.data(), attrib.vertices.size() * 4) & 0xFFFFFFFF;
+    res.normal_hash = XXH3_64bits(attrib.normals.data(), attrib.normals.size() * 4) & 0xFFFFFFFF;
+    res.uv_hash = XXH3_64bits(attrib.texcoords.data(), attrib.texcoords.size() * 4) & 0xFFFFFFFF;
     res.shape_count = (int)shapes.size();
     res.material_count = (int)materials.size();
+
+    res.print("tinyobjloader");
 }
 
 
@@ -86,6 +94,8 @@ int main(int argc, const char* argv[])
         printf("USAGE: obj_parse_tester <obj file>\n");
         return -1;
     }
-    printf("File: %s\n", argv[1]);
+    const char* filename = argv[1];
+    printf("File: %s\n", filename);
+    parse_tinyobjloader(filename);
 	return 0;
 }
