@@ -21,6 +21,8 @@ add_subdirectory(libs/xxHash/cmake_unofficial)
 project ("obj_parse_tester")
 
 add_executable (obj_parse_tester "obj_parse_tester.cpp")
+add_definitions(-DNOMINMAX)
 target_compile_features(obj_parse_tester PRIVATE cxx_std_17)
+target_include_directories(obj_parse_tester PRIVATE libs/tinyobjloader/experimental)
 
 target_link_libraries(obj_parse_tester tinyobjloader xxHash::xxhash fast_obj_lib assimp::assimp)

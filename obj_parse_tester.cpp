@@ -1,36 +1,19 @@
 ﻿#include "libs/fast_obj/fast_obj.h"
+
 #include "libs/tinyobjloader/tiny_obj_loader.h"
+#define TINYOBJ_LOADER_OPT_IMPLEMENTATION
+#include "libs/tinyobjloader/experimental/tinyobj_loader_opt.h"
+
 #include "libs/rapidobj/include/rapidobj/rapidobj.hpp"
-#include "libs/xxHash/xxhash.h"
 
 #include "libs/assimp/include/assimp/Importer.hpp"
 #include "libs/assimp/include/assimp/scene.h"
 #include "libs/assimp/include/assimp/postprocess.h"
 
+#include "libs/xxHash/xxhash.h"
+
 #include <stdio.h>
 #include <chrono>
-
-struct Hasher
-{
-    Hasher()
-    {
-        state = XXH3_createState();
-        XXH3_64bits_reset(state);
-    }
-    void feed(const void* data, size_t size)
-    {
-        XXH3_64bits_update(state, data, size);
-    }
-    uint64_t get_hash()
-    {
-        return XXH3_64bits_digest(state);
-    }
-    ~Hasher()
-    {
-        XXH3_freeState(state);
-    }
-    XXH3_state_t* state;
-};
 
 static std::chrono::steady_clock::time_point get_time()
 {
@@ -57,11 +40,28 @@ struct ObjParseStats
 
     void print(const char* title) const
     {
-        printf("%-15s ok=%i t=%6.3f s num (v=%i vn=%i vt=%i o=%i mat=%i) hash (v=%08x vn=%08x vt=%08x)\n",
+        printf("%-20s ok=%i t=%6.3f s num (v=%i vn=%i vt=%i o=%i mat=%i) hash (v=%08x vn=%08x vt=%08x)\n",
             title, ok, time, vertex_count, normal_count, uv_count, shape_count, material_count,
             vertex_hash, normal_hash, uv_hash);
     }
 };
+
+static char* read_file(const char* filename, size_t* outSize = nullptr)
+{
+    FILE* f = fopen(filename, "rb");
+    if (!f)
+        return nullptr;
+    fseek(f, 0, SEEK_END);
+    auto size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    char* buf = new char[size];
+    fread(buf, 1, size, f);
+    fclose(f);
+    if (outSize != nullptr)
+        *outSize = size;
+    return buf;
+}
+
 
 static void parse_tinyobjloader(const char* filename)
 {
@@ -91,6 +91,39 @@ static void parse_tinyobjloader(const char* filename)
     }
 
     res.print("tinyobjloader");
+}
+
+static void parse_tinyobjloader_opt(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    using namespace tinyobj_opt;
+    attrib_t attrib;
+    std::vector<shape_t> shapes;
+    std::vector<material_t> materials;
+    size_t filesize = 0;
+    char* filebuf = read_file(filename, &filesize);
+    LoadOption options;
+    options.triangulate = false;
+    res.ok = parseObj(&attrib, &shapes, &materials, filebuf, filesize, options);
+    delete[] filebuf;
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        res.vertex_count = (int)(attrib.vertices.size() / 3);
+        res.normal_count = (int)(attrib.normals.size() / 3);
+        res.uv_count = (int)(attrib.texcoords.size() / 2);
+        res.vertex_hash = XXH3_64bits(attrib.vertices.data(), attrib.vertices.size() * 4) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(attrib.normals.data(), attrib.normals.size() * 4) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(attrib.texcoords.data(), attrib.texcoords.size() * 4) & 0xFFFFFFFF;
+        res.shape_count = (int)shapes.size();
+        res.material_count = (int)materials.size();
+    }
+
+    res.print("tinyobjloader_opt");
 }
 
 static void parse_fast_obj(const char* filename)
@@ -178,21 +211,6 @@ static void parse_assimp(const char* filename)
     res.print("assimp");
 }
 
-static bool read_file(const char* filename)
-{
-    FILE* f = fopen(filename, "rb");
-    if (!f)
-        return false;
-    fseek(f, 0, SEEK_END);
-    auto size = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    char* buf = new char[size];
-    fread(buf, 1, size, f);
-    fclose(f);
-    delete[] buf;
-    return true;
-}
-
 
 int main(int argc, const char* argv[])
 {
@@ -204,12 +222,16 @@ int main(int argc, const char* argv[])
     const char* filename = argv[1];
     printf("File: %s\n", filename);
     // just read the file in, to prewarm OS file caches
-    if (!read_file(filename))
+    const char* filebuf = read_file(filename);
+    if (filebuf == nullptr)
     {
         printf("Can't read the file!\n");
         return 1;
     }
+    delete[] filebuf;
+
     parse_tinyobjloader(filename);
+    parse_tinyobjloader_opt(filename);
     parse_fast_obj(filename);
     parse_rapidobj(filename);
     parse_assimp(filename);
