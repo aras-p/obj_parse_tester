@@ -29,13 +29,13 @@ StringRef read_next_line(StringRef &buffer);
  * Drop leading white-space from a StringRef.
  * Note that backslash character is considered white-space.
  */
-StringRef drop_whitespace(StringRef str);
+const char* drop_whitespace(const char* p, const char* end);
 
 /**
  * Drop leading non-white-space from a StringRef.
  * Note that backslash character is considered white-space.
  */
-StringRef drop_non_whitespace(StringRef str);
+const char* drop_non_whitespace(const char* p, const char* end);
 
 /**
  * Parse an integer from an input string.
@@ -46,7 +46,7 @@ StringRef drop_non_whitespace(StringRef str);
  *
  * Returns the remainder of the input string after parsing.
  */
-StringRef parse_int(StringRef str, int fallback, int &dst, bool skip_space = true);
+const char* parse_int(const char* p, const char* end, int fallback, int &dst, bool skip_space = true);
 
 /**
  * Parse a float from an input string.
@@ -57,7 +57,7 @@ StringRef parse_int(StringRef str, int fallback, int &dst, bool skip_space = tru
  *
  * Returns the remainder of the input string after parsing.
  */
-StringRef parse_float(StringRef str, float fallback, float &dst, bool skip_space = true);
+const char* parse_float(const char* p, const char* end, float fallback, float &dst, bool skip_space = true);
 
 /**
  * Parse a number of white-space separated floats from an input string.
@@ -67,6 +67,16 @@ StringRef parse_float(StringRef str, float fallback, float &dst, bool skip_space
  *
  * Returns the remainder of the input string after parsing.
  */
-StringRef parse_floats(StringRef str, float fallback, float *dst, int count);
+const char* parse_floats(const char* p, const char* end, float fallback, float *dst, int count);
+
+inline bool startswith(const char* p, const char* end, StringRef prefix)
+{
+    size_t size = end - p;
+    size_t prefix_size = prefix.size();
+    if (size < prefix_size) {
+        return false;
+    }
+    return memcmp(p, prefix.data(), prefix_size) == 0;
+}
 
 }  // namespace blender::io::obj
