@@ -6,65 +6,43 @@
 
 #pragma once
 
-#include <fstream>
 #include <stdio.h>
 #include "IO_wavefront_obj.h"
-#include "obj_import_mtl.hh"
 #include "obj_import_objects.hh"
+#include "obj_export_mtl.hh"
 
 namespace blender::io::obj {
 
+/* Note: the OBJ parser implementation is planned to get fairly large changes "soon",
+ * so don't read too much into current implementation... */
 class OBJParser {
  private:
   const OBJImportParams &import_params_;
   FILE *obj_file_;
   Vector<std::string> mtl_libraries_;
+  size_t read_buffer_size_;
 
  public:
-  OBJParser(const OBJImportParams &import_params);
+  /**
+   * Open OBJ file at the path given in import parameters.
+   */
+  OBJParser(const OBJImportParams &import_params, size_t read_buffer_size);
   ~OBJParser();
 
+  /**
+   * Read the OBJ file line by line and create OBJ Geometry instances. Also store all the vertex
+   * and UV vertex coordinates in a struct accessible by all objects.
+   */
   void parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
              GlobalVertices &r_global_vertices);
-  Span<std::string> mtl_libraries() const;
-};
-
-
-/**
- * All texture map options with number of arguments they accept.
- */
-class TextureMapOptions {
- private:
-  Map<const std::string, int> tex_map_options;
-
- public:
-  TextureMapOptions()
-  {
-    tex_map_options.add_new("-blendu", 1);
-    tex_map_options.add_new("-blendv", 1);
-    tex_map_options.add_new("-boost", 1);
-    tex_map_options.add_new("-mm", 2);
-    tex_map_options.add_new("-o", 3);
-    tex_map_options.add_new("-s", 3);
-    tex_map_options.add_new("-t", 3);
-    tex_map_options.add_new("-texres", 1);
-    tex_map_options.add_new("-clamp", 1);
-    tex_map_options.add_new("-bm", 1);
-    tex_map_options.add_new("-imfchan", 1);
-  }
-
   /**
-   * All valid option strings.
+   * Return a list of all material library filepaths referenced by the OBJ file.
    */
-  Map<const std::string, int>::KeyIterator all_options() const
-  {
-    return tex_map_options.keys();
-  }
+  Span<std::string> mtl_libraries() const;
 
-  int number_of_args(StringRef option) const
-  {
-    return tex_map_options.lookup_as(std::string(option));
-  }
+ private:
+  void add_mtl_library(StringRef path);
+  void add_default_mtl_library();
 };
 
 class MTLParser {
@@ -74,11 +52,16 @@ class MTLParser {
    * Directory in which the MTL file is found.
    */
   char mtl_dir_path_[260];
-  std::fstream mtl_file_;
 
  public:
-  MTLParser(StringRef mtl_library_, StringRefNull obj_filepath);
+  /**
+   * Open material library file.
+   */
+  MTLParser(StringRefNull mtl_library_, StringRefNull obj_filepath);
 
-  void parse_and_store(Map<std::string, std::unique_ptr<MTLMaterial>> &r_mtl_materials);
+  /**
+   * Read MTL file(s) and add MTLMaterial instances to the given Map reference.
+   */
+  void parse_and_store(Map<std::string, std::unique_ptr<MTLMaterial>> &r_materials);
 };
 }  // namespace blender::io::obj

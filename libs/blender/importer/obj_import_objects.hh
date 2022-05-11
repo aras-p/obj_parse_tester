@@ -94,7 +94,9 @@ struct Geometry {
   eGeometryType geom_type_ = GEOM_MESH;
   std::string geometry_name_;
   Map<std::string, int> group_indices_;
+  Vector<std::string> group_order_;
   Map<std::string, int> material_indices_;
+  Vector<std::string> material_order_;
 
   int vertex_start_ = 0;
   int vertex_count_ = 0;
@@ -104,6 +106,7 @@ struct Geometry {
   Vector<PolyCorner> face_corners_;
   Vector<PolyElem> face_elements_;
 
+  bool has_invalid_polys_ = false;
   bool has_vertex_normals_ = false;
   bool use_vertex_groups_ = false;
   NurbsElement nurbs_element_;
