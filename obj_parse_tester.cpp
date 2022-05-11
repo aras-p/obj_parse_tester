@@ -196,7 +196,7 @@ static bool read_file(const char* filename)
 
 int main(int argc, const char* argv[])
 {
-    if (argc != 2)
+    if (argc < 2)
     {
         printf("USAGE: obj_parse_tester <obj file>\n");
         return -1;
