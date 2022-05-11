@@ -74,16 +74,45 @@ static void parse_tinyobjloader(const char* filename)
 
     res.time = get_duration(t0);
 
-    res.vertex_count = (int)(attrib.vertices.size() / 3);
-    res.normal_count = (int)(attrib.normals.size() / 3);
-    res.uv_count = (int)(attrib.texcoords.size() / 2);
-    res.vertex_hash = XXH3_64bits(attrib.vertices.data(), attrib.vertices.size() * 4) & 0xFFFFFFFF;
-    res.normal_hash = XXH3_64bits(attrib.normals.data(), attrib.normals.size() * 4) & 0xFFFFFFFF;
-    res.uv_hash = XXH3_64bits(attrib.texcoords.data(), attrib.texcoords.size() * 4) & 0xFFFFFFFF;
-    res.shape_count = (int)shapes.size();
-    res.material_count = (int)materials.size();
+    if (res.ok)
+    {
+        res.vertex_count = (int)(attrib.vertices.size() / 3);
+        res.normal_count = (int)(attrib.normals.size() / 3);
+        res.uv_count = (int)(attrib.texcoords.size() / 2);
+        res.vertex_hash = XXH3_64bits(attrib.vertices.data(), attrib.vertices.size() * 4) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(attrib.normals.data(), attrib.normals.size() * 4) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(attrib.texcoords.data(), attrib.texcoords.size() * 4) & 0xFFFFFFFF;
+        res.shape_count = (int)shapes.size();
+        res.material_count = (int)materials.size();
+    }
 
     res.print("tinyobjloader");
+}
+
+static void parse_fast_obj(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    fastObjMesh* m = fast_obj_read(filename);
+    res.ok = m != nullptr;
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        res.vertex_count = m->position_count - 1;
+        res.normal_count = m->normal_count - 1;
+        res.uv_count = m->texcoord_count - 1;
+        res.vertex_hash = XXH3_64bits(m->positions + 3, (m->position_count-1) * 12) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(m->normals + 3, (m->normal_count-1) * 12) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(m->texcoords + 2, (m->texcoord_count-1) * 8) & 0xFFFFFFFF;
+        res.shape_count = m->object_count;
+        res.material_count = m->material_count;
+        fast_obj_destroy(m);
+    }
+
+    res.print("fast_obj");
 }
 
 
@@ -97,5 +126,6 @@ int main(int argc, const char* argv[])
     const char* filename = argv[1];
     printf("File: %s\n", filename);
     parse_tinyobjloader(filename);
+    parse_fast_obj(filename);
 	return 0;
 }

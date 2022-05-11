@@ -14,4 +14,4 @@ project ("obj_parse_tester")
 add_executable (obj_parse_tester "obj_parse_tester.cpp")
 target_compile_features(obj_parse_tester PRIVATE cxx_std_17)
 
-target_link_libraries(obj_parse_tester tinyobjloader xxHash::xxhash)
+target_link_libraries(obj_parse_tester tinyobjloader xxHash::xxhash fast_obj_lib)
