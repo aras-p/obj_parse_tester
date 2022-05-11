@@ -3,6 +3,10 @@
 #include "libs/rapidobj/include/rapidobj/rapidobj.hpp"
 #include "libs/xxHash/xxhash.h"
 
+#include "libs/assimp/include/assimp/Importer.hpp"
+#include "libs/assimp/include/assimp/scene.h"
+#include "libs/assimp/include/assimp/postprocess.h"
+
 #include <stdio.h>
 #include <chrono>
 
@@ -140,6 +144,40 @@ static void parse_rapidobj(const char* filename)
     res.print("rapidobj");
 }
 
+static void parse_assimp(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    Assimp::Importer imp;
+    const aiScene* scene = imp.ReadFile(filename, 0);
+
+    res.ok = scene != nullptr;
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        // assimp "cooks" the imported data into a rendering-friendly
+        // format where vertices/normals/uvs are no longer separate etc.
+        // So the counting/hashing is not following the other libraries.
+        res.vertex_count = 0;
+        res.normal_count = 0;
+        res.uv_count = 0;
+        for (int i = 0; i < scene->mNumMeshes; ++i)
+        {
+            const aiMesh* m = scene->mMeshes[i];
+            res.vertex_count += m->mNumVertices;
+            res.normal_count += m->mNumVertices;
+            res.uv_count += m->mNumVertices;
+        }
+        res.shape_count = scene->mNumMeshes;
+        res.material_count = scene->mNumMaterials;
+    }
+
+    res.print("assimp");
+}
+
 
 int main(int argc, const char* argv[])
 {
@@ -153,5 +191,6 @@ int main(int argc, const char* argv[])
     parse_tinyobjloader(filename);
     parse_fast_obj(filename);
     parse_rapidobj(filename);
+    parse_assimp(filename);
     return 0;
 }
