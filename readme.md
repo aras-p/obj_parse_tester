@@ -8,7 +8,9 @@ Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 | tinyobjloader_opt | 0.040 | 0.49   | 0.42   |  3.98        |
 | fast_obj          | 0.024 | 0.37   | 0.31   |  2.89        |
 | rapidobj          | 0.020 | 0.21   | 0.18   |  0.88        |
-| blender           | 0.069 | 0.89   | 0.84   |  6.63        |
+| blenderMar19      | 0.069 | 0.89   | 0.84   |  6.63        |
+| blenderMay10      |       | 1.78   | 1.70   | 12.97        |
+| blenderMay11      |       |        | 1.30   |              |
 | assimp            | 0.196 | 2.90   | 3.75   | 21.17        |
 
 macOS 12.3, Apple M1 Max, clang 13:
@@ -18,7 +20,8 @@ macOS 12.3, Apple M1 Max, clang 13:
 | tinyobjloader     | 0.142 | 2.11   | 2.15   | 14.83        |
 | tinyobjloader_opt | 0.030 | 0.49   | 0.39   |  6.06        |
 | fast_obj          | 0.023 | 0.33   | 0.29   |  2.42        |
-| blender           | 0.048 | 0.73   | 0.74   |  5.52        |
+| blenderMar19      | 0.048 | 0.73   | 0.74   |  5.52        |
+| blenderMay10      |       |        | 0.73   |  5.54        |
 | assimp            | 0.129 | 1.91   | 2.21   | 14.27        |
 
 
