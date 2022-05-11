@@ -54,7 +54,7 @@ static char* read_file(const char* filename, size_t* outSize = nullptr)
     if (!f)
         return nullptr;
     fseek(f, 0, SEEK_END);
-    auto size = ftell(f);
+    auto size = _ftelli64(f);
     fseek(f, 0, SEEK_SET);
     char* buf = new char[size];
     fread(buf, 1, size, f);
