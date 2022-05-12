@@ -9,6 +9,14 @@
  * The utilities are not directly usable by other formats, since
  * they treat backslash (\) as a whitespace character (OBJ format
  * allows backslashes to function as a line-continuation character).
+ *
+ * Many of these functions take two pointers (p, end) indicating
+ * which part of a string to operate on, and return a possibly
+ * changed new start of the string. They could be taking a StringRef
+ * as input and returning a new StringRef, but this is a hot path
+ * in OBJ parsing, and the StringRef approach does lose performance
+ * (mostly due to return of StringRef being two register-size values
+ * instead of just one pointer).
  */
 
 namespace blender::io::obj {
@@ -26,16 +34,16 @@ namespace blender::io::obj {
 StringRef read_next_line(StringRef &buffer);
 
 /**
- * Drop leading white-space from a StringRef.
+ * Drop leading white-space from a string part.
  * Note that backslash character is considered white-space.
  */
-const char* drop_whitespace(const char* p, const char* end);
+const char *drop_whitespace(const char *p, const char *end);
 
 /**
- * Drop leading non-white-space from a StringRef.
+ * Drop leading non-white-space from a string part.
  * Note that backslash character is considered white-space.
  */
-const char* drop_non_whitespace(const char* p, const char* end);
+const char *drop_non_whitespace(const char *p, const char *end);
 
 /**
  * Parse an integer from an input string.
@@ -44,9 +52,10 @@ const char* drop_non_whitespace(const char* p, const char* end);
  * number can't be parsed (invalid syntax, out of range),
  * `fallback` value is stored instead.
  *
- * Returns the remainder of the input string after parsing.
+ * Returns the start of remainder of the input string after parsing.
  */
-const char* parse_int(const char* p, const char* end, int fallback, int &dst, bool skip_space = true);
+const char *parse_int(
+    const char *p, const char *end, int fallback, int &dst, bool skip_space = true);
 
 /**
  * Parse a float from an input string.
@@ -55,9 +64,10 @@ const char* parse_int(const char* p, const char* end, int fallback, int &dst, bo
  * number can't be parsed (invalid syntax, out of range),
  * `fallback` value is stored instead.
  *
- * Returns the remainder of the input string after parsing.
+ * Returns the start of remainder of the input string after parsing.
  */
-const char* parse_float(const char* p, const char* end, float fallback, float &dst, bool skip_space = true);
+const char *parse_float(
+    const char *p, const char *end, float fallback, float &dst, bool skip_space = true);
 
 /**
  * Parse a number of white-space separated floats from an input string.
@@ -65,18 +75,8 @@ const char* parse_float(const char* p, const char* end, float fallback, float &d
  * number can't be parsed (invalid syntax, out of range),
  * `fallback` value is stored instead.
  *
- * Returns the remainder of the input string after parsing.
+ * Returns the start of remainder of the input string after parsing.
  */
-const char* parse_floats(const char* p, const char* end, float fallback, float *dst, int count);
-
-inline bool startswith(const char* p, const char* end, StringRef prefix)
-{
-    size_t size = end - p;
-    size_t prefix_size = prefix.size();
-    if (size < prefix_size) {
-        return false;
-    }
-    return memcmp(p, prefix.data(), prefix_size) == 0;
-}
+const char *parse_floats(const char *p, const char *end, float fallback, float *dst, int count);
 
 }  // namespace blender::io::obj

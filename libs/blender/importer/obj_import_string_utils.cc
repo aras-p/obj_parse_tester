@@ -38,31 +38,32 @@ static bool is_whitespace(char c)
   return c <= ' ' || c == '\\';
 }
 
-const char* drop_whitespace(const char* p, const char* end)
+const char *drop_whitespace(const char *p, const char *end)
 {
-    while (p < end && is_whitespace(*p)) {
-        ++p;
-    }
-    return p;
+  while (p < end && is_whitespace(*p)) {
+    ++p;
+  }
+  return p;
 }
 
-const char* drop_non_whitespace(const char* p, const char* end)
+const char *drop_non_whitespace(const char *p, const char *end)
 {
-    while (p < end && !is_whitespace(*p)) {
-        ++p;
-    }
-    return p;
+  while (p < end && !is_whitespace(*p)) {
+    ++p;
+  }
+  return p;
 }
 
-static const char* drop_plus(const char* p, const char* end)
+static const char *drop_plus(const char *p, const char *end)
 {
-    if (p < end && *p == '+') {
-        ++p;
-    }
-    return p;
+  if (p < end && *p == '+') {
+    ++p;
+  }
+  return p;
 }
 
-const char* parse_float(const char* p, const char* end, float fallback, float& dst, bool skip_space)
+const char *parse_float(
+    const char *p, const char *end, float fallback, float &dst, bool skip_space)
 {
   if (skip_space) {
     p = drop_whitespace(p, end);
@@ -75,7 +76,7 @@ const char* parse_float(const char* p, const char* end, float fallback, float& d
   return res.ptr;
 }
 
-const char* parse_floats(const char* p, const char* end, float fallback, float* dst, int count)
+const char *parse_floats(const char *p, const char *end, float fallback, float *dst, int count)
 {
   for (int i = 0; i < count; ++i) {
     p = parse_float(p, end, fallback, dst[i]);
@@ -83,7 +84,7 @@ const char* parse_floats(const char* p, const char* end, float fallback, float* 
   return p;
 }
 
-const char* parse_int(const char* p, const char* end, int fallback, int& dst, bool skip_space)
+const char *parse_int(const char *p, const char *end, int fallback, int &dst, bool skip_space)
 {
   if (skip_space) {
     p = drop_whitespace(p, end);

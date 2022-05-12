@@ -67,7 +67,8 @@ static Geometry *create_geometry(Geometry *const prev_geometry,
 }
 
 static void geom_add_vertex(Geometry *geom,
-                            const char* p, const char* end,
+                            const char *p,
+                            const char *end,
                             GlobalVertices &r_global_vertices)
 {
   float3 vert;
@@ -77,7 +78,8 @@ static void geom_add_vertex(Geometry *geom,
 }
 
 static void geom_add_vertex_normal(Geometry *geom,
-                                   const char* p, const char* end,
+                                   const char *p,
+                                   const char *end,
                                    GlobalVertices &r_global_vertices)
 {
   float3 normal;
@@ -86,7 +88,7 @@ static void geom_add_vertex_normal(Geometry *geom,
   geom->has_vertex_normals_ = true;
 }
 
-static void geom_add_uv_vertex(const char* p, const char* end, GlobalVertices &r_global_vertices)
+static void geom_add_uv_vertex(const char *p, const char *end, GlobalVertices &r_global_vertices)
 {
   float2 uv;
   parse_floats(p, end, 0.0f, uv, 2);
@@ -94,7 +96,8 @@ static void geom_add_uv_vertex(const char* p, const char* end, GlobalVertices &r
 }
 
 static void geom_add_edge(Geometry *geom,
-                          const char* p, const char* end,
+                          const char *p,
+                          const char *end,
                           const VertexIndexOffset &offsets,
                           GlobalVertices &r_global_vertices)
 {
@@ -109,7 +112,8 @@ static void geom_add_edge(Geometry *geom,
 }
 
 static void geom_add_polygon(Geometry *geom,
-                             const char* p, const char* end,
+                             const char *p,
+                             const char *end,
                              const GlobalVertices &global_vertices,
                              const VertexIndexOffset &offsets,
                              const int material_index,
@@ -201,14 +205,15 @@ static void geom_add_polygon(Geometry *geom,
 }
 
 static Geometry *geom_set_curve_type(Geometry *geom,
-                                     const char* p, const char* end,
+                                     const char *p,
+                                     const char *end,
                                      const GlobalVertices &global_vertices,
                                      const StringRef group_name,
                                      VertexIndexOffset &r_offsets,
                                      Vector<std::unique_ptr<Geometry>> &r_all_geometries)
 {
   p = drop_whitespace(p, end);
-  if (!startswith(p, end, "bspline")) {
+  if (!StringRef(p, end).startswith("bspline")) {
     std::cerr << "Curve type not supported: '" << std::string(p, end) << "'" << std::endl;
     return geom;
   }
@@ -218,13 +223,14 @@ static Geometry *geom_set_curve_type(Geometry *geom,
   return geom;
 }
 
-static void geom_set_curve_degree(Geometry *geom, const char* p, const char* end)
+static void geom_set_curve_degree(Geometry *geom, const char *p, const char *end)
 {
   parse_int(p, end, 3, geom->nurbs_element_.degree);
 }
 
 static void geom_add_curve_vertex_indices(Geometry *geom,
-                                          const char* p, const char* end,
+                                          const char *p,
+                                          const char *end,
                                           const GlobalVertices &global_vertices)
 {
   /* Curve lines always have "0.0" and "1.0", skip over them. */
@@ -243,7 +249,7 @@ static void geom_add_curve_vertex_indices(Geometry *geom,
   }
 }
 
-static void geom_add_curve_parameters(Geometry *geom, const char* p, const char* end)
+static void geom_add_curve_parameters(Geometry *geom, const char *p, const char *end)
 {
   p = drop_whitespace(p, end);
   if (p == end) {
@@ -280,11 +286,12 @@ static void geom_update_group(const StringRef rest_line, std::string &r_group_na
   r_group_name = rest_line;
 }
 
-static void geom_update_smooth_group(const char* p, const char* end, bool &r_state_shaded_smooth)
+static void geom_update_smooth_group(const char *p, const char *end, bool &r_state_shaded_smooth)
 {
   p = drop_whitespace(p, end);
   /* Some implementations use "0" and "null" too, in addition to "off". */
-  if (startswith(p, end, "0") || startswith(p, end, "off") || startswith(p, end, "null")) {
+  const StringRef line = StringRef(p, end);
+  if (line == "0" || line.startswith("off") || line.startswith("null")) {
     r_state_shaded_smooth = false;
     return;
   }
@@ -312,7 +319,7 @@ OBJParser::~OBJParser()
 }
 
 /* If line starts with keyword followed by whitespace, returns true and drops it from the line. */
-static bool parse_keyword(const char*& p, const char* end, StringRef keyword)
+static bool parse_keyword(const char *&p, const char *end, StringRef keyword)
 {
   const size_t keyword_len = keyword.size();
   if (end - p < keyword_len + 1) {
@@ -400,7 +407,7 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
     StringRef buffer_str{buffer.data(), (int64_t)last_nl};
     while (!buffer_str.is_empty()) {
       StringRef line = read_next_line(buffer_str);
-      const char* p = line.begin(), * end = line.end();
+      const char *p = line.begin(), *end = line.end();
       p = drop_whitespace(p, end);
       ++line_number;
       if (p == end) {
@@ -421,7 +428,8 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
       /* Faces. */
       else if (parse_keyword(p, end, "f")) {
         geom_add_polygon(curr_geom,
-                         p, end,
+                         p,
+                         end,
                          r_global_vertices,
                          offsets,
                          state_material_index,
@@ -437,8 +445,12 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
         state_shaded_smooth = false;
         state_group_name = "";
         state_material_name = "";
-        curr_geom = create_geometry(
-            curr_geom, GEOM_MESH, StringRef(p, end).trim(), r_global_vertices, r_all_geometries, offsets);
+        curr_geom = create_geometry(curr_geom,
+                                    GEOM_MESH,
+                                    StringRef(p, end).trim(),
+                                    r_global_vertices,
+                                    r_all_geometries,
+                                    offsets);
       }
       /* Groups. */
       else if (parse_keyword(p, end, "g")) {
@@ -484,7 +496,7 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
       else if (parse_keyword(p, end, "parm")) {
         geom_add_curve_parameters(curr_geom, p, end);
       }
-      else if (startswith(p, end, "end")) {
+      else if (StringRef(p, end).startswith("end")) {
         /* End of curve definition, nothing else to do. */
       }
       else {
@@ -502,7 +514,7 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
   add_default_mtl_library();
 }
 
-static eMTLSyntaxElement mtl_line_start_to_enum(const char*& p, const char* end)
+static eMTLSyntaxElement mtl_line_start_to_enum(const char *&p, const char *end)
 {
   if (parse_keyword(p, end, "map_Kd")) {
     return eMTLSyntaxElement::map_Kd;
@@ -546,7 +558,10 @@ static const std::pair<StringRef, int> unsupported_texture_options[] = {
     {"-texres", 1},
 };
 
-static bool parse_texture_option(const char*& p, const char* end, MTLMaterial *material, tex_map_XX &tex_map)
+static bool parse_texture_option(const char *&p,
+                                 const char *end,
+                                 MTLMaterial *material,
+                                 tex_map_XX &tex_map)
 {
   p = drop_whitespace(p, end);
   if (parse_keyword(p, end, "-o")) {
@@ -565,8 +580,9 @@ static bool parse_texture_option(const char*& p, const char* end, MTLMaterial *m
     p = drop_whitespace(p, end);
     /* Only sphere is supported. */
     tex_map.projection_type = 1;
-    if (!startswith(p, end, "sphere")) {
-      std::cerr << "OBJ import: only sphere MTL projection type is supported: '" << std::string(p, end) << "'"
+    const StringRef line = StringRef(p, end);
+    if (!line.startswith("sphere")) {
+      std::cerr << "OBJ import: only sphere MTL projection type is supported: '" << line << "'"
                 << std::endl;
     }
     p = drop_non_whitespace(p, end);
@@ -587,11 +603,15 @@ static bool parse_texture_option(const char*& p, const char* end, MTLMaterial *m
   return false;
 }
 
-static void parse_texture_map(const char* p, const char* end, MTLMaterial *material, const char *mtl_dir_path)
+static void parse_texture_map(const char *p,
+                              const char *end,
+                              MTLMaterial *material,
+                              const char *mtl_dir_path)
 {
-  bool is_map = startswith(p, end, "map_");
-  bool is_refl = startswith(p, end, "refl");
-  bool is_bump = startswith(p, end, "bump");
+  const StringRef line = StringRef(p, end);
+  bool is_map = line.startswith("map_");
+  bool is_refl = line.startswith("refl");
+  bool is_bump = line.startswith("bump");
   if (!is_map && !is_refl && !is_bump) {
     return;
   }
@@ -676,8 +696,8 @@ void MTLParser::parse_and_store(Map<string, std::unique_ptr<MTLMaterial>> &r_mat
 
   StringRef buffer_str{(const char *)buffer, (int64_t)buffer_len};
   while (!buffer_str.is_empty()) {
-    StringRef lineTODO = read_next_line(buffer_str);
-    const char* p = lineTODO.begin(), * end = lineTODO.end();
+    const StringRef line = read_next_line(buffer_str);
+    const char *p = line.begin(), *end = line.end();
     p = drop_whitespace(p, end);
     if (p == end) {
       continue;
@@ -689,7 +709,8 @@ void MTLParser::parse_and_store(Map<string, std::unique_ptr<MTLMaterial>> &r_mat
         material = nullptr;
       }
       else {
-        material = r_materials.lookup_or_add(string(mat_name), std::make_unique<MTLMaterial>()).get();
+        material =
+            r_materials.lookup_or_add(string(mat_name), std::make_unique<MTLMaterial>()).get();
       }
     }
     else if (material != nullptr) {
