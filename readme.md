@@ -14,6 +14,20 @@ Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 | blenderMay11      | 0.07 | 0.94   | 0.83   |  6.92        |
 | assimp            | 0.20 | 2.98   | 3.88   | 21.98        |
 
+Windows 10, AMD Ryzen 5950X, clang 13:
+
+| Library           |sponza|Monkey-6|rungholt|Blender3Splash|
+| :---              |  ---:|    ---:|    ---:|          ---:|
+| tinyobjloader     |      | 2.65   | 2.42   | 16.47        |
+| tinyobjloader_opt |      | 0.38   | 0.38   |  2.69        |
+| fast_obj          |      | 0.71   | 0.58   |  5.25        |
+| rapidobj          |      | 0.19   | 0.17   |  1.62        |
+| blenderMar18      |      |        |        |              |
+| blenderMar19      |      |        |        |              |
+| blenderMay10      |      | 1.76   | 1.77   | 12.67        |
+| blenderMay11      |      | 0.80   | 0.74   |  5.98        |
+| assimp            |      | 2.74   | 3.53   | 19.90        |
+
 macOS 12.3, Apple M1 Max, clang 13:
 
 | Library           |sponza|Monkey-6|rungholt|Blender3Splash|
