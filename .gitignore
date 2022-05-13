@@ -6,3 +6,4 @@ test_files/rungholt.obj
 test_files/sponza.obj
 bin/*
 .DS_Store
+test_files/monkey-subd6-nonormals.obj
