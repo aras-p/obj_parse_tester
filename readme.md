@@ -1,4 +1,6 @@
-﻿# Testing various Wafefront .OBJ parsing libraries
+# Testing various Wafefront .OBJ parsing libraries
+
+### Time in seconds it takes to load an .obj file:
 
 Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 
@@ -32,19 +34,31 @@ macOS 12.3, Apple M1 Max, clang 13:
 | blender           |      | 0.73   | 0.76   |  5.53        |
 | assimp            | 0.13 | 1.89   | 2.17   | 14.26        |
 
+### Memory usage:
+
 Memory usage in MB (peak/end), Windows/VS2022:
-| Library           |rungholt  |Blender3Splash|
-| :---              |      ---:|          ---:|
-| tinyobjloader     | 395/248  |1505/1438     |
-| tinyobjloader_opt | 1662/469 |13850/2272    |
-| fast_obj          | 319/214  |1895/1237     |
-| rapidobj          | 428/218  |2667/1265     |
-| blender           | 272/253  |1621/1614     |
-| assimp            | 1341/640 |6097/2788     |
 
+| Library           |rungholt    |Blender3Splash|
+| :---              |        ---:|          ---:|
+| tinyobjloader     | 395 / 248  |1505 / 1438   |
+| tinyobjloader_opt | 1662 / 469 |13850 / 2272  |
+| fast_obj          | 319 / 214  |1895 / 1237   |
+| rapidobj          | 428 / 218  |2667 / 1265   |
+| blender           | 272 / 253  |1621 / 1614   |
+| assimp            | 1341 / 640 |6097 / 2788   |
 
+### Models used:
 
 * `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
 * `Monkey-6`: 330MB, 2.0M verts, 1 object, 1 material. Blender's Monkey mesh, subdivided to level 6.
 * `rungholt`: 270MB, 2.5M verts, 1 object, 84 materials. "Rungholt" Minecraft map from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
 * `Blender3Splash`: 2.5GB, 14.4M verts, 24k objects, 113 materials. Blender 3.0 splash scene "[Sprite Fright](https://cloud.blender.org/p/gallery/617933e9b7b35ce1e1c01066)", exported as OBJ.
+
+### Libraries used (all except Blender as Git submodules):
+
+* `tinyobjloader`: https://github.com/tinyobjloader/tinyobjloader, 2021 Dec 27 (8322e00a), v1.0.6+. MIT license.
+* `tinyobjloader_opt`: using the experimental multi-threaded parser from the above.
+* `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
+* `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
+* `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
+* `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
