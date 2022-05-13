@@ -44,6 +44,7 @@ Memory usage in MB (peak/end), Windows/VS2022:
 | tinyobjloader_opt | 1662 / 469 |13850 / 2272  |
 | fast_obj          | 319 / 214  |1895 / 1237   |
 | rapidobj          | 428 / 218  |2667 / 1265   |
+| blender-initial   | 680 / 560  |4058 / 4051   |
 | blender           | 272 / 253  |1621 / 1614   |
 | assimp            | 1341 / 640 |6097 / 2788   |
 
