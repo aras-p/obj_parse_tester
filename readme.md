@@ -32,6 +32,17 @@ macOS 12.3, Apple M1 Max, clang 13:
 | blender           |      | 0.73   | 0.76   |  5.53        |
 | assimp            | 0.13 | 1.89   | 2.17   | 14.26        |
 
+Memory usage in MB (peak/end), Windows/VS2022:
+| Library           |rungholt  |Blender3Splash|
+| :---              |      ---:|          ---:|
+| tinyobjloader     | 395/248  |1505/1438     |
+| tinyobjloader_opt | 1662/469 |13850/2272    |
+| fast_obj          | 319/214  |1895/1237     |
+| rapidobj          | 428/218  |2667/1265     |
+| blender           | 272/253  |1621/1614     |
+| assimp            | 1341/640 |6097/2788     |
+
+
 
 * `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
 * `Monkey-6`: 330MB, 2.0M verts, 1 object, 1 material. Blender's Monkey mesh, subdivided to level 6.
