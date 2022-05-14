@@ -1,6 +1,6 @@
 # Testing various Wafefront .OBJ parsing libraries
 
-Test code for "[Comparing .obj parse libraries](https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/)" blog post.
+Test code for "[**Comparing .obj parse libraries**](https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/)" blog post.
 
 ### Libraries:
 
