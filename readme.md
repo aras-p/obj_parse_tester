@@ -1,20 +1,31 @@
 # Testing various Wafefront .OBJ parsing libraries
 
+### Libraries:
+
+* `tinyobjloader`: https://github.com/tinyobjloader/tinyobjloader, 2021 Dec 27 (8322e00a), v1.0.6+. MIT license.
+* `tinyobjloader_opt`: using the experimental multi-threaded parser from the above.
+* `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
+* `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
+* `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
+* `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
+* `osg`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.
+
+
 ### Features
 
 | Feature        |tinyobjloader|fast_obj|rapidobj|blender|assimp|osg|
 | :---                     |:---:|:---:|:---:|:---:|:---:|:---:|
 | Base meshes              | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Base materials           | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials | ✓ |   | ✓ |   | ✓ |   |
+| Vertex colors ([xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)) | ✓ |   |   |   | ✓ | ✓ |
+| Vertex colors ([MRGB](http://paulbourke.net/dataformats/obj/colour.html))   |   |   |   |   |   | ✓ |
 | Lines (`l`)              | ✓ |   | ✓ | ✓ | ✓ | ✓ |
 | Points (`p`)             | ✓ |   |   |   | ✓ | ✓ |
 | Curves (`curv`)          |   |   |   | ✓* |   |   |
 | 2D Curves (`curv2`)      |   |   |   |   |   |   |
 | Surfaces (`surf`)        |   |   |   |   |   |   |
-| Vertex colors "[xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)"   | ✓ |   |   |   | ✓ | ✓ |
-| Vertex colors "[MRGB](http://paulbourke.net/dataformats/obj/colour.html)"     |   |   |   |   |   | ✓ |
 | Skin weights (`vw`)      | ✓ |   |   |   |   |   |
-| [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials            | ✓ |   | ✓ |   | ✓ |   |
 | Subdiv crease tags (`t`) | ✓ |   |   |   |   |   |
 | Line continuations (`\`) |   |   |   | ✓ | ✓ | ✓ |
 | Platform: Windows        | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
@@ -23,6 +34,13 @@
 
 * Blender OBJ parser has only limited support for curves: only `bspline` curve type is supported.
 
+
+### Testing on models:
+
+* `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
+* `Monkey-6`: 330MB, 2.0M verts, 1 object, 1 material. Blender's Monkey mesh, subdivided to level 6.
+* `rungholt`: 270MB, 2.5M verts, 1 object, 84 materials. "Rungholt" Minecraft map from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
+* `Blender3Splash`: 2.5GB, 14.4M verts, 24k objects, 113 materials. Blender 3.0 splash scene "[Sprite Fright](https://cloud.blender.org/p/gallery/617933e9b7b35ce1e1c01066)", exported as OBJ.
 
 
 ### Time in seconds it takes to load an .obj file:
@@ -76,19 +94,3 @@ Memory usage in MB (peak/end), Windows/VS2022:
 | assimp            | 1341 / 640 | 6097 / 2788  |
 | osg               |  857 / 850 | 3945 / 3937  |
 
-### Models used:
-
-* `sponza`: 20MB, 0.15M verts, 381 objects, 25 materials. "Crytek Sponza" from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
-* `Monkey-6`: 330MB, 2.0M verts, 1 object, 1 material. Blender's Monkey mesh, subdivided to level 6.
-* `rungholt`: 270MB, 2.5M verts, 1 object, 84 materials. "Rungholt" Minecraft map from [McGuire Computer Graphics Archive](https://casual-effects.com/data/).
-* `Blender3Splash`: 2.5GB, 14.4M verts, 24k objects, 113 materials. Blender 3.0 splash scene "[Sprite Fright](https://cloud.blender.org/p/gallery/617933e9b7b35ce1e1c01066)", exported as OBJ.
-
-### Libraries used (all except Blender as Git submodules):
-
-* `tinyobjloader`: https://github.com/tinyobjloader/tinyobjloader, 2021 Dec 27 (8322e00a), v1.0.6+. MIT license.
-* `tinyobjloader_opt`: using the experimental multi-threaded parser from the above.
-* `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
-* `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
-* `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
-* `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
-* `osg`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.
