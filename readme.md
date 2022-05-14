@@ -87,4 +87,5 @@ Memory usage in MB (peak/end), Windows/VS2022:
 * `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
 * `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
 * `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
+* `openscenegraph`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.
 * `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
