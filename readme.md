@@ -1,5 +1,30 @@
 # Testing various Wafefront .OBJ parsing libraries
 
+### Features
+
+| Feature        |tinyobjloader|fast_obj|rapidobj|blender|assimp|
+| :---                     |:---:|:---:|:---:|:---:|:---:|
+| Base meshes              | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Base materials           | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Lines (`l`)              | ✓ |   | ✓ | ✓ | ✓ |
+| Points (`p`)             | ✓ |   |   |   | ✓ |
+| Curves (`curv`)          |   |   |   | ✓* |   |
+| 2D Curves (`curv2`)      |   |   |   |   |   |
+| Surfaces (`surf`)        |   |   |   |   |   |
+| Vertex colors "[xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)"   | ✓ |   |   |   | ✓ |
+| Vertex colors "[MRGB](http://paulbourke.net/dataformats/obj/colour.html)"     |   |   |   |   |   |
+| Skin weights (`vw`)      | ✓ |   |   |   |   |
+| [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials            | ✓ |   | ✓ |   | ✓ |
+| Subdiv crease tags (`t`) | ✓ |   |   |   |   |
+| Line continuations (`\`) |   |   |   | ✓ | ✓ |
+| Platform: Windows        | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Platform: macOS          | ✓ | ✓ |   | ✓ | ✓ |
+| Platform: Linux          | ✓ | ✓ | ✓ | ✓ | ✓ |
+
+* Blender OBJ parser has only limited support for curves: only `bspline` curve type is supported.
+
+
+
 ### Time in seconds it takes to load an .obj file:
 
 Windows 10, AMD Ryzen 5950X, VS2022 17.1:
