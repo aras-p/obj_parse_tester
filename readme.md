@@ -2,24 +2,24 @@
 
 ### Features
 
-| Feature        |tinyobjloader|fast_obj|rapidobj|blender|assimp|
-| :---                     |:---:|:---:|:---:|:---:|:---:|
-| Base meshes              | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Base materials           | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Lines (`l`)              | ✓ |   | ✓ | ✓ | ✓ |
-| Points (`p`)             | ✓ |   |   |   | ✓ |
-| Curves (`curv`)          |   |   |   | ✓* |   |
-| 2D Curves (`curv2`)      |   |   |   |   |   |
-| Surfaces (`surf`)        |   |   |   |   |   |
-| Vertex colors "[xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)"   | ✓ |   |   |   | ✓ |
-| Vertex colors "[MRGB](http://paulbourke.net/dataformats/obj/colour.html)"     |   |   |   |   |   |
-| Skin weights (`vw`)      | ✓ |   |   |   |   |
-| [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials            | ✓ |   | ✓ |   | ✓ |
-| Subdiv crease tags (`t`) | ✓ |   |   |   |   |
-| Line continuations (`\`) |   |   |   | ✓ | ✓ |
-| Platform: Windows        | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Platform: macOS          | ✓ | ✓ |   | ✓ | ✓ |
-| Platform: Linux          | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Feature        |tinyobjloader|fast_obj|rapidobj|blender|assimp|osg|
+| :---                     |:---:|:---:|:---:|:---:|:---:|:---:|
+| Base meshes              | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Base materials           | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Lines (`l`)              | ✓ |   | ✓ | ✓ | ✓ | ✓ |
+| Points (`p`)             | ✓ |   |   |   | ✓ | ✓ |
+| Curves (`curv`)          |   |   |   | ✓* |   |   |
+| 2D Curves (`curv2`)      |   |   |   |   |   |   |
+| Surfaces (`surf`)        |   |   |   |   |   |   |
+| Vertex colors "[xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)"   | ✓ |   |   |   | ✓ | ✓ |
+| Vertex colors "[MRGB](http://paulbourke.net/dataformats/obj/colour.html)"     |   |   |   |   |   | ✓ |
+| Skin weights (`vw`)      | ✓ |   |   |   |   |   |
+| [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials            | ✓ |   | ✓ |   | ✓ |   |
+| Subdiv crease tags (`t`) | ✓ |   |   |   |   |   |
+| Line continuations (`\`) |   |   |   | ✓ | ✓ | ✓ |
+| Platform: Windows        | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Platform: macOS          | ✓ | ✓ |   | ✓ | ✓ | ✓ |
+| Platform: Linux          | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 * Blender OBJ parser has only limited support for curves: only `bspline` curve type is supported.
 
@@ -37,6 +37,7 @@ Windows 10, AMD Ryzen 5950X, VS2022 17.1:
 | rapidobj          | 0.02 | 0.19   | 0.19   |  1.25        |
 | blender           | 0.07 | 0.94   | 0.83   |  6.92        |
 | assimp            | 0.20 | 2.98   | 3.88   | 21.98        |
+| osg               | 0.82 |12.88   |12.04   | 96.42        |
 
 Windows 10, AMD Ryzen 5950X, clang 13:
 
@@ -72,6 +73,7 @@ Memory usage in MB (peak/end), Windows/VS2022:
 | blender-initial   |  680 / 560 | 4058 / 4051  |
 | blender           |  272 / 253 | 1621 / 1614  |
 | assimp            | 1341 / 640 | 6097 / 2788  |
+| osg               |  857 / 850 | 3945 / 3937  |
 
 ### Models used:
 
@@ -87,5 +89,5 @@ Memory usage in MB (peak/end), Windows/VS2022:
 * `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
 * `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
 * `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
-* `openscenegraph`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.
 * `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
+* `osg`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.

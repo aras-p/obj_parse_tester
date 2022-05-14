@@ -18,6 +18,8 @@
 
 #include "libs/blender/importer/obj_importer.hh"
 
+#include "libs/OpenSceneGraph-min/obj.h"
+
 #include "libs/xxHash/xxhash.h"
 
 #include <stdio.h>
@@ -227,6 +229,36 @@ static void parse_blender(const char* filename)
     res.print("blender");
 }
 
+static void parse_openscenegraph(const char* filename)
+{
+    ObjParseStats res;
+    auto t0 = get_time();
+
+    using namespace obj;
+    Model m;
+    const char* baseEnd1 = strrchr(filename, '/');
+    const char* baseEnd2 = strrchr(filename, '\\');
+    std::string baseDir = std::string(filename, baseEnd1 > baseEnd2 ? baseEnd1 : baseEnd2);
+    std::ifstream fin(filename);
+    res.ok = m.readOBJ(fin, baseDir);
+
+    res.time = get_duration(t0);
+
+    if (res.ok)
+    {
+        res.vertex_count = (int)m.vertices.size();
+        res.normal_count = (int)m.normals.size();
+        res.uv_count = (int)m.texcoords.size();
+        res.vertex_hash = XXH3_64bits(m.vertices.data(), m.vertices.size() * 12) & 0xFFFFFFFF;
+        res.normal_hash = XXH3_64bits(m.normals.data(), m.normals.size() * 12) & 0xFFFFFFFF;
+        res.uv_hash = XXH3_64bits(m.texcoords.data(), m.texcoords.size() * 8) & 0xFFFFFFFF;
+        res.shape_count = (int)m.elementStateMap.size();
+        res.material_count = (int)m.materialMap.size();
+    }
+
+    res.print("openscenegraph");
+}
+
 
 static void parse_assimp(const char* filename)
 {
@@ -262,6 +294,18 @@ static void parse_assimp(const char* filename)
     res.print("assimp");
 }
 
+static bool readthefile(const char* filename)
+{
+    // just read the file in, to prewarm OS file caches
+    const char* filebuf = read_file(filename);
+    if (filebuf == nullptr)
+    {
+        printf("Can't read the file!\n");
+        return false;
+    }
+    delete[] filebuf;
+    return true;
+}
 
 int main(int argc, const char* argv[])
 {
@@ -272,14 +316,7 @@ int main(int argc, const char* argv[])
     }
     const char* filename = argv[1];
     printf("File: %s\n", filename);
-    // just read the file in, to prewarm OS file caches
-    const char* filebuf = read_file(filename);
-    if (filebuf == nullptr)
-    {
-        printf("Can't read the file!\n");
-        return 1;
-    }
-    delete[] filebuf;
+    if (!readthefile(filename)) return 1;
 
     parse_tinyobjloader(filename);
     parse_tinyobjloader_opt(filename);
@@ -287,6 +324,7 @@ int main(int argc, const char* argv[])
     #if HAS_RAPIDOBJ
     parse_rapidobj(filename);
     #endif
+    parse_openscenegraph(filename);
     parse_blender(filename);
     parse_assimp(filename);
     return 0;

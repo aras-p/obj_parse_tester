@@ -23,6 +23,7 @@ project ("obj_parse_tester")
 add_executable (obj_parse_tester "obj_parse_tester.cpp")
 add_definitions(-DNOMINMAX)
 target_sources(obj_parse_tester PRIVATE
+	# embedded Blender OBJ importer parts
 	libs/blender/importer/obj_import_file_reader.cc
 	libs/blender/importer/obj_importer.cc
 	libs/blender/importer/obj_import_string_utils.cc
@@ -37,6 +38,8 @@ target_sources(obj_parse_tester PRIVATE
 	libs/blender/intern/math_vector_inline.c
 	libs/blender/intern/path_util.c
 	libs/blender/intern/string.c
+	# minimal amount of OpenSceneGraph to get OBJ parser
+	libs/OpenSceneGraph-min/obj.cpp
 )
 target_compile_features(obj_parse_tester PRIVATE cxx_std_17)
 target_include_directories(obj_parse_tester PRIVATE
