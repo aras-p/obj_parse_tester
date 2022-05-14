@@ -88,7 +88,10 @@ static void parse_tinyobjloader(const char* filename)
     std::vector<material_t> materials;
     std::string err;
     std::string warn;
-    res.ok = LoadObj(&attrib, &shapes, &materials, &warn, &err, filename, 0, false);
+    const char* baseEnd1 = strrchr(filename, '/');
+    const char* baseEnd2 = strrchr(filename, '\\');
+    std::string baseDir = std::string(filename, baseEnd1 > baseEnd2 ? baseEnd1 : baseEnd2);
+    res.ok = LoadObj(&attrib, &shapes, &materials, &warn, &err, filename, baseDir.c_str(), false, false);
 
     res.time = get_duration(t0);
 
