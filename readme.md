@@ -59,6 +59,7 @@ macOS 12.3, Apple M1 Max, clang 13:
 | fast_obj          | 0.02 | 0.33   | 0.30   |  2.40        |
 | blender           |      | 0.73   | 0.76   |  5.53        |
 | assimp            | 0.13 | 1.89   | 2.17   | 14.26        |
+| osg               | 0.46 | 7.04   | 5.83   | 53.14        |
 
 ### Memory usage:
 
