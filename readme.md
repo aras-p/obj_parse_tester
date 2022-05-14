@@ -1,5 +1,7 @@
 # Testing various Wafefront .OBJ parsing libraries
 
+Test code for "[Comparing .obj parse libraries](https://aras-p.info/blog/2022/05/14/comparing-obj-parse-libraries/)" blog post.
+
 ### Libraries:
 
 * `tinyobjloader`: https://github.com/tinyobjloader/tinyobjloader, 2021 Dec 27 (8322e00a), v1.0.6+. MIT license.
