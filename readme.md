@@ -32,7 +32,7 @@
 | Platform: macOS          | ✓ | ✓ |   | ✓ | ✓ | ✓ |
 | Platform: Linux          | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-* Blender OBJ parser has only limited support for curves: only `bspline` curve type is supported.
+\* Blender OBJ parser has limited support for curves: only `bspline` curve type is supported.
 
 
 ### Testing on models:
