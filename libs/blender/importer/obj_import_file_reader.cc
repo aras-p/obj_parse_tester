@@ -12,6 +12,8 @@
 #include "obj_import_file_reader.hh"
 #include "obj_import_string_utils.hh"
 
+#include <charconv>
+
 namespace blender::io::obj {
 
 using std::string;
@@ -35,6 +37,7 @@ static Geometry *create_geometry(Geometry *const prev_geometry,
     g->geom_type_ = new_type;
     g->geometry_name_ = name.is_empty() ? "New object" : name;
     g->vertex_start_ = global_vertices.vertices.size();
+    g->vertex_color_start_ = global_vertices.vertex_colors.size();
     r_offset.set_index_offset(g->vertex_start_);
     return g;
   };
@@ -72,9 +75,57 @@ static void geom_add_vertex(Geometry *geom,
                             GlobalVertices &r_global_vertices)
 {
   float3 vert;
-  parse_floats(p, end, 0.0f, vert, 3);
+  p = parse_floats(p, end, 0.0f, vert, 3);
   r_global_vertices.vertices.append(vert);
   geom->vertex_count_++;
+  /* OBJ extension: `xyzrgb` vertex colors, when the vertex position
+   * is followed by 3 more RGB color components. See
+   * http://paulbourke.net/dataformats/obj/colour.html */
+  if (p < end) {
+    float3 srgb;
+    p = parse_floats(p, end, -1.0f, srgb, 3);
+    if (srgb.x >= 0 && srgb.y >= 0 && srgb.z >= 0) {
+      // note: skipped srgb->linear conversion for testing
+      //float3 linear;
+      //srgb_to_linearrgb_v3_v3(linear, srgb);
+      r_global_vertices.vertex_colors.append(srgb);
+      geom->vertex_color_count_++;
+    }
+  }
+}
+
+static void geom_add_mrgb_colors(Geometry *geom,
+                                 const char *p,
+                                 const char *end,
+                                 GlobalVertices &r_global_vertices)
+{
+  /* MRGB color extension, in the form of
+   * "#MRGB MMRRGGBBMMRRGGBB ..."
+   * http://paulbourke.net/dataformats/obj/colour.html */
+  p = drop_whitespace(p, end);
+  const int mrgb_length = 8;
+  while (p + mrgb_length <= end) {
+    uint32_t value = 0;
+    std::from_chars_result res = std::from_chars(p, p + mrgb_length, value, 16);
+    if (res.ec == std::errc::invalid_argument || res.ec == std::errc::result_out_of_range) {
+      return;
+    }
+    unsigned char srgb[4];
+    srgb[0] = (value >> 16) & 0xFF;
+    srgb[1] = (value >> 8) & 0xFF;
+    srgb[2] = value & 0xFF;
+    srgb[3] = 0xFF;
+    float linear[4];
+    // note: skipped srgb->linear conversion for testing
+    //srgb_to_linearrgb_uchar4(linear, srgb);
+    linear[0] = srgb[0] / 255.0f;
+    linear[1] = srgb[1] / 255.0f;
+    linear[2] = srgb[2] / 255.0f;
+    linear[3] = 1.0f;
+    r_global_vertices.vertex_colors.append({linear[0], linear[1], linear[2]});
+    geom->vertex_color_count_++;
+    p += mrgb_length;
+  }
 }
 
 static void geom_add_vertex_normal(Geometry *geom,
@@ -84,6 +135,10 @@ static void geom_add_vertex_normal(Geometry *geom,
 {
   float3 normal;
   parse_floats(p, end, 0.0f, normal, 3);
+  /* Normals can be printed with only several digits in the file,
+   * making them ever-so-slightly non unit length. Make sure they are
+   * normalized. */
+  normalize_v3(normal);
   r_global_vertices.vertex_normals.append(normal);
   geom->has_vertex_normals_ = true;
 }
@@ -125,7 +180,7 @@ static void geom_add_polygon(Geometry *geom,
   curr_face.material_index = material_index;
   if (group_index >= 0) {
     curr_face.vertex_group_index = group_index;
-    geom->use_vertex_groups_ = true;
+    geom->has_vertex_groups_ = true;
   }
 
   const int orig_corners_size = geom->face_corners_.size();
@@ -150,7 +205,7 @@ static void geom_add_polygon(Geometry *geom,
       if (p < end && *p == '/') {
         ++p;
         p = parse_int(p, end, INT32_MAX, corner.vertex_normal_index, false);
-        got_normal = corner.uv_vert_index != INT32_MAX;
+        got_normal = corner.vertex_normal_index != INT32_MAX;
       }
     }
     /* Always keep stored indices non-negative and zero-based. */
@@ -173,7 +228,10 @@ static void geom_add_polygon(Geometry *geom,
         face_valid = false;
       }
     }
-    if (got_normal) {
+    /* Ignore corner normal index, if the geometry does not have any normals.
+     * Some obj files out there do have face definitions that refer to normal indices,
+     * without any normals being present (T98782). */
+    if (got_normal && geom->has_vertex_normals_) {
       corner.vertex_normal_index += corner.vertex_normal_index < 0 ?
                                         global_vertices.vertex_normals.size() :
                                         -1;
@@ -477,6 +535,9 @@ void OBJParser::parse(Vector<std::unique_ptr<Geometry>> &r_all_geometries,
       }
       else if (parse_keyword(p, end, "mtllib")) {
         add_mtl_library(StringRef(p, end).trim());
+      }
+      else if (parse_keyword(p, end, "#MRGB")) {
+        geom_add_mrgb_colors(curr_geom, p, end, r_global_vertices);
       }
       /* Comments. */
       else if (*p == '#') {

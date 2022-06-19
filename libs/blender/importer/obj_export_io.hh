@@ -24,6 +24,7 @@ enum class eFileType {
 
 enum class eOBJSyntaxElement {
   vertex_coords,
+  vertex_coords_color,
   uv_vertex_coords,
   normal,
   poly_element_begin,

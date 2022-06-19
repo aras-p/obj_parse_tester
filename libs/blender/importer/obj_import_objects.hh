@@ -24,6 +24,7 @@ struct GlobalVertices {
   Vector<float3> vertices;
   Vector<float2> uv_vertices;
   Vector<float3> vertex_normals;
+  Vector<float3> vertex_colors;
 };
 
 /**
@@ -100,6 +101,8 @@ struct Geometry {
 
   int vertex_start_ = 0;
   int vertex_count_ = 0;
+  int vertex_color_start_ = 0;
+  int vertex_color_count_ = 0;
   /** Edges written in the file in addition to (or even without polygon) elements. */
   Vector<MEdge> edges_;
 
@@ -108,7 +111,7 @@ struct Geometry {
 
   bool has_invalid_polys_ = false;
   bool has_vertex_normals_ = false;
-  bool use_vertex_groups_ = false;
+  bool has_vertex_groups_ = false;
   NurbsElement nurbs_element_;
   int total_loops_ = 0;
 };
