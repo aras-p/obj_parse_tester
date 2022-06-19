@@ -1,16 +1,11 @@
-﻿#if !defined(__APPLE__)
-#define HAS_RAPIDOBJ 1
-#endif
-
+﻿
 #include "libs/fast_obj/fast_obj.h"
 
 #include "libs/tinyobjloader/tiny_obj_loader.h"
 #define TINYOBJ_LOADER_OPT_IMPLEMENTATION
 #include "libs/tinyobjloader/experimental/tinyobj_loader_opt.h"
 
-#if HAS_RAPIDOBJ
 #include "libs/rapidobj/include/rapidobj/rapidobj.hpp"
-#endif
 
 #include "libs/assimp/include/assimp/Importer.hpp"
 #include "libs/assimp/include/assimp/scene.h"
@@ -169,7 +164,6 @@ static void parse_fast_obj(const char* filename)
     res.print("fast_obj");
 }
 
-#if HAS_RAPIDOBJ
 static void parse_rapidobj(const char* filename)
 {
     ObjParseStats res;
@@ -194,7 +188,6 @@ static void parse_rapidobj(const char* filename)
 
     res.print("rapidobj");
 }
-#endif // #if HAS_RAPIDOBJ
 
 static void parse_blender(const char* filename)
 {
@@ -324,9 +317,7 @@ int main(int argc, const char* argv[])
     parse_tinyobjloader(filename);
     parse_tinyobjloader_opt(filename);
     parse_fast_obj(filename);
-    #if HAS_RAPIDOBJ
     parse_rapidobj(filename);
-    #endif
     parse_openscenegraph(filename);
     parse_blender(filename);
     parse_assimp(filename);

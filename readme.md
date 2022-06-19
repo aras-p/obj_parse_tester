@@ -7,8 +7,8 @@ Test code for "[**Comparing .obj parse libraries**](https://aras-p.info/blog/202
 * `tinyobjloader`: https://github.com/tinyobjloader/tinyobjloader, 2021 Dec 27 (8322e00a), v1.0.6+. MIT license.
 * `tinyobjloader_opt`: using the experimental multi-threaded parser from the above.
 * `fast_obj`: https://github.com/thisistherk/fast_obj, 2022 Jan 29 (85778da5), v1.2+. MIT license.
-* `rapidobj`: https://github.com/guybrush77/rapidobj, 2021 Jun 29 (83225625), v0.1. MIT license.
-* `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/9757b4ef/source/blender/io/wavefront_obj/importer)), 2022 May 12, version 3.3.0 alpha. GPL v3 license.
+* `rapidobj`: https://github.com/guybrush77/rapidobj, 2022 Jun 18 (0e545f1), v0.9. MIT license.
+* `blender`: part of Blender codebase for building just the OBJ parser ([tree](https://github.com/blender/blender/tree/6ad9d8e2/source/blender/io/wavefront_obj/importer)), 2022 Jun 19, version 3.3.0 alpha. GPL v3 license.
 * `assimp`: https://github.com/assimp/assimp, 2022 May 10 (ff43768d), version 5.2.3+. BSD 3-clause license.
 * `osg`: part of https://github.com/openscenegraph/OpenSceneGraph code, just the OBJ parser ([tree](https://github.com/openscenegraph/OpenSceneGraph/tree/68340324/src/osgPlugins/obj)), 2022 Apr 7, v3.6.5+. LGPL-based license.
 
@@ -20,8 +20,8 @@ Test code for "[**Comparing .obj parse libraries**](https://aras-p.info/blog/202
 | Base meshes              | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Base materials           | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | [PBR](http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr) materials | ✓ |   | ✓ |   | ✓ |   |
-| Vertex colors ([xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)) | ✓ |   |   |   | ✓ | ✓ |
-| Vertex colors ([MRGB](http://paulbourke.net/dataformats/obj/colour.html))   |   |   |   |   |   | ✓ |
+| Vertex colors ([xyzrgb](http://paulbourke.net/dataformats/obj/colour.html)) | ✓ |   |   | ✓ | ✓ | ✓ |
+| Vertex colors ([MRGB](http://paulbourke.net/dataformats/obj/colour.html))   |   |   |   | ✓ |   | ✓ |
 | Lines (`l`)              | ✓ |   | ✓ | ✓ | ✓ | ✓ |
 | Points (`p`)             | ✓ |   |   |   | ✓ | ✓ |
 | Curves (`curv`)          |   |   |   | ✓* |   |   |
@@ -31,7 +31,7 @@ Test code for "[**Comparing .obj parse libraries**](https://aras-p.info/blog/202
 | Subdiv crease tags (`t`) | ✓ |   |   |   |   |   |
 | Line continuations (`\`) |   |   |   | ✓ | ✓ | ✓ |
 | Platform: Windows        | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Platform: macOS          | ✓ | ✓ |   | ✓ | ✓ | ✓ |
+| Platform: macOS          | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Platform: Linux          | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 \* Blender OBJ parser has limited support for curves: only `bspline` curve type is supported.
@@ -77,6 +77,7 @@ macOS 12.3, Apple M1 Max, clang 13:
 | tinyobjloader     | 0.14 | 2.09   | 2.12   | 14.72        |
 | tinyobjloader_opt | 0.03 | 0.47   | 0.38   |  5.07        |
 | fast_obj          | 0.02 | 0.33   | 0.30   |  2.40        |
+| rapidobj          | 0.01 | 0.10   | 0.10   |  0.63        |
 | blender           |      | 0.73   | 0.76   |  5.53        |
 | assimp            | 0.13 | 1.89   | 2.17   | 14.26        |
 | osg               | 0.46 | 7.04   | 5.83   | 53.14        |
