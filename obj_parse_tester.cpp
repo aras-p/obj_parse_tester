@@ -22,7 +22,7 @@
 
 static std::chrono::steady_clock::time_point get_time()
 {
-    return std::chrono::high_resolution_clock::now();
+    return std::chrono::steady_clock::now();
 }
 static double get_duration(std::chrono::steady_clock::time_point since)
 {
