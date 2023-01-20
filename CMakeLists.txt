@@ -47,9 +47,14 @@ target_include_directories(obj_parse_tester PRIVATE
 	libs/blender
 )
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 target_link_libraries(obj_parse_tester
 	tinyobjloader
 	xxHash::xxhash
 	fast_obj_lib
+        rapidobj::rapidobj
 	assimp::assimp
-	${CMAKE_SOURCE_DIR}/libs/blender/pthreads/lib/pthreadVC3.lib)
+        Threads::Threads
+)
