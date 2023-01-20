@@ -54,7 +54,10 @@ target_link_libraries(obj_parse_tester
 	tinyobjloader
 	xxHash::xxhash
 	fast_obj_lib
-        rapidobj::rapidobj
+	rapidobj::rapidobj
 	assimp::assimp
-        Threads::Threads
+	Threads::Threads
 )
+if (MSVC)
+	target_link_libraries(obj_parse_tester ${CMAKE_SOURCE_DIR}/libs/blender/pthreads/lib/pthreadVC3.lib)
+endif()
